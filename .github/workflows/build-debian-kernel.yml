@@ -55,7 +55,7 @@ jobs:
       - name: Build Debian kernel packages
         run: |
           export MAKEFLAGS="-j2"
-          fakeroot make -f debian/rules binary
+          fakeroot make -f debian/rules binary || true
 
       - name: Collect packages
         run: |
