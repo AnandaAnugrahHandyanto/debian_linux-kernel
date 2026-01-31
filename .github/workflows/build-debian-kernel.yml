@@ -12,6 +12,24 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Force Python
+        run: |
+          python3 --version
+          which python3
+
+      - name: Setup swap
+        run: |
+          sudo fallocate -l 8G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+          free -h
+
       - name: Install build dependencies
         run: |
           sudo apt update
@@ -27,7 +45,11 @@ jobs:
             libelf-dev \
             dwarves \
             rsync \
-            git
+            git \
+            python3-pip \
+            libncurses-dev \
+            xz-utils \
+            kmod
 
       - name: Prepare build
         run: |
