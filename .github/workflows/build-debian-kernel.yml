@@ -1,0 +1,50 @@
+name: Build Debian Kernel (SavarezOS)
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            build-essential \
+            fakeroot \
+            devscripts \
+            debhelper \
+            bc \
+            bison \
+            flex \
+            libssl-dev \
+            libelf-dev \
+            dwarves \
+            rsync \
+            git
+
+      - name: Prepare build
+        run: |
+          dpkg-parsechangelog
+          chmod +x debian/rules
+
+      - name: Build Debian kernel packages
+        run: |
+          fakeroot make -f debian/rules binary
+
+      - name: Collect packages
+        run: |
+          mkdir out
+          mv ../*.deb out/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: savarez-kernel-deb
+          path: out/
