@@ -43,7 +43,9 @@ jobs:
             git \
             libncurses-dev \
             xz-utils \
-            kmod
+            kmod \
+            python3-dacite
+
 
       - name: Prepare build
         run: |
