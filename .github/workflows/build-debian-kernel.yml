@@ -32,6 +32,7 @@ jobs:
             build-essential \
             fakeroot \
             devscripts \
+            dpkg-dev \
             debhelper \
             bc \
             bison \
@@ -47,12 +48,11 @@ jobs:
             python3-dacite \
             kernel-wedge
 
-      - name: Prepare build
+      - name: Generate debian control file
         run: |
-          dpkg-parsechangelog
-          chmod +x debian/rules
+          make -f debian/rules debian/control
 
-      - name: Build Debian packages
+      - name: Build Debian kernel packages
         run: |
           export MAKEFLAGS="-j2"
           dpkg-buildpackage -rfakeroot -b -uc -us
