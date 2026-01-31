@@ -17,17 +17,17 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Force Python
+      - name: Check Python
         run: |
-          python3 --version
           which python3
+          python3 --version
 
       - name: Setup swap
         run: |
-          sudo dd if=/dev/zero of=/swapfile bs=1M count=8192 status=progress
-          sudo chmod 600 /swapfile
-          sudo mkswap /swapfile
-          sudo swapon /swapfile
+          sudo dd if=/dev/zero of=/mnt/swapfile bs=1M count=8192 status=progress
+          sudo chmod 600 /mnt/swapfile
+          sudo mkswap /mnt/swapfile
+          sudo swapon /mnt/swapfile
           free -h
 
       - name: Install build dependencies
@@ -58,6 +58,7 @@ jobs:
 
       - name: Build Debian kernel packages
         run: |
+          export MAKEFLAGS="-j2"
           fakeroot make -f debian/rules binary
 
       - name: Collect packages
