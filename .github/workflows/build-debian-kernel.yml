@@ -44,8 +44,8 @@ jobs:
             libncurses-dev \
             xz-utils \
             kmod \
-            python3-dacite
-
+            python3-dacite \
+            kernel-wedge
 
       - name: Prepare build
         run: |
