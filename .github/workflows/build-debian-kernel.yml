@@ -19,50 +19,36 @@ jobs:
             git \
             sudo \
             ca-certificates \
-            build-essential
+            build-essential \
+            sbuild \
+            schroot \
+            debootstrap
+
+      - name: Setup sbuild
+        run: |
+          sbuild-adduser root
+          newgrp sbuild
+
+      - name: Create sid chroot
+        run: |
+          sbuild-createchroot \
+            --include=eatmydata,ccache \
+            sid /srv/chroot/sid-amd64 http://deb.debian.org/debian
 
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Install build dependencies
+      - name: Build kernel with sbuild
         run: |
-          apt install -y \
-            fakeroot \
-            devscripts \
-            dpkg-dev \
-            debhelper \
-            quilt \
-            bc \
-            bison \
-            flex \
-            libssl-dev \
-            libelf-dev \
-            dwarves \
-            rsync \
-            libncurses-dev \
-            xz-utils \
-            kmod \
-            python3-dacite \
-            kernel-wedge \
-            python3-sphinx \
-            texlive-latex-base \
-            graphviz \
-            rustc \
-            cargo
-
-      - name: Generate debian control
-        run: |
-          make -f debian/rules debian/control || true
-
-      - name: Build Debian kernel packages
-        run: |
-          export MAKEFLAGS="-j2"
-          dpkg-buildpackage -rfakeroot -b -uc -us -d
+          sbuild \
+            --no-run-lintian \
+            --build-dep-resolver=apt \
+            .
 
       - name: Collect packages
         run: |
           mkdir -p out
-          find .. -maxdepth 1 -type f -name "*.deb" -exec mv {} out/ \;
+          find /srv/chroot -name "*.deb" -exec mv {} out/ \;
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
