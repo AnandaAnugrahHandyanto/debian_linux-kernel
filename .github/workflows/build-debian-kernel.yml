@@ -57,7 +57,7 @@ jobs:
       - name: Build Debian kernel packages
         run: |
           export MAKEFLAGS="-j2"
-          dpkg-buildpackage -rfakeroot -b -uc -us
+          dpkg-buildpackage -rfakeroot -b -uc -us -d
 
       - name: Collect packages
         run: |
