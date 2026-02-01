@@ -6,29 +6,27 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
+
+    container:
+      image: debian:sid
 
     steps:
+      - name: Install base tools
+        run: |
+          apt update
+          apt install -y \
+            git \
+            sudo \
+            ca-certificates \
+            build-essential
+
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Check Python
-        run: |
-          python3 --version
-
-      - name: Setup swap
-        run: |
-          sudo dd if=/dev/zero of=/mnt/swapfile bs=1M count=8192 status=progress
-          sudo chmod 600 /mnt/swapfile
-          sudo mkswap /mnt/swapfile
-          sudo swapon /mnt/swapfile
-          free -h
-
       - name: Install build dependencies
         run: |
-          sudo apt update
-          sudo apt install -y \
-            build-essential \
+          apt install -y \
             fakeroot \
             devscripts \
             dpkg-dev \
@@ -41,12 +39,16 @@ jobs:
             libelf-dev \
             dwarves \
             rsync \
-            git \
             libncurses-dev \
             xz-utils \
             kmod \
             python3-dacite \
-            kernel-wedge
+            kernel-wedge \
+            python3-sphinx \
+            texlive-latex-base \
+            graphviz \
+            rustc \
+            cargo
 
       - name: Generate debian control
         run: |
@@ -55,8 +57,7 @@ jobs:
       - name: Build Debian kernel packages
         run: |
           export MAKEFLAGS="-j2"
-          export DEB_BUILD_OPTIONS="nodoc"
-          dpkg-buildpackage -rfakeroot -b -uc -us -d
+          dpkg-buildpackage -rfakeroot -b -uc -us
 
       - name: Collect packages
         run: |
