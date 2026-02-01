@@ -14,7 +14,6 @@ jobs:
 
       - name: Check Python
         run: |
-          which python3
           python3 --version
 
       - name: Setup swap
@@ -34,6 +33,7 @@ jobs:
             devscripts \
             dpkg-dev \
             debhelper \
+            quilt \
             bc \
             bison \
             flex \
@@ -48,13 +48,14 @@ jobs:
             python3-dacite \
             kernel-wedge
 
-      - name: Generate debian control file
+      - name: Generate debian control
         run: |
           make -f debian/rules debian/control || true
 
       - name: Build Debian kernel packages
         run: |
           export MAKEFLAGS="-j2"
+          export DEB_BUILD_OPTIONS="nodoc"
           dpkg-buildpackage -rfakeroot -b -uc -us -d
 
       - name: Collect packages
