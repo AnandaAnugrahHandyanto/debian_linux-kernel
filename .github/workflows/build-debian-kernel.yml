@@ -50,7 +50,7 @@ jobs:
 
       - name: Generate debian control file
         run: |
-          make -f debian/rules debian/control
+          make -f debian/rules debian/control || true
 
       - name: Build Debian kernel packages
         run: |
