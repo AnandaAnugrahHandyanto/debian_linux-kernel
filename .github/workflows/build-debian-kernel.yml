@@ -7,48 +7,48 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     container:
       image: debian:sid
+      options: --privileged
 
     steps:
-      - name: Install base tools
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
         run: |
-          apt update
-          apt install -y \
+          apt-get update
+          apt-get install -y \
             git \
             sudo \
             ca-certificates \
             build-essential \
             sbuild \
-            schroot \
-            debootstrap
+            mmdebstrap \
+            uidmap \
+            debian-archive-keyring
 
-      - name: Setup sbuild
+      - name: Configure sbuild
         run: |
-          sbuild-adduser root
-          newgrp sbuild
+          mkdir -p ~/.sbuild
+          echo "\$chroot_mode = 'unshare';" > ~/.sbuildrc
+          echo "\$run_autopkgtest = 0;" >> ~/.sbuildrc
+          echo "\$verbose = 1;" >> ~/.sbuildrc
 
-      - name: Create sid chroot
+      - name: Create build environment
         run: |
-          sbuild-createchroot \
-            --include=eatmydata,ccache \
-            sid /srv/chroot/sid-amd64 http://deb.debian.org/debian
-
-      - name: Checkout source
-        uses: actions/checkout@v4
+          mkdir -p ~/.cache/sbuild
+          sbuild-createchroot --mode=unshare --make-sbuild-tarball=~/.cache/sbuild/sid-amd64.tar.zst sid --include=eatmydata,ccache
 
       - name: Build kernel with sbuild
         run: |
-          sbuild \
-            --no-run-lintian \
-            --build-dep-resolver=apt \
-            .
+          sbuild -d sid --no-clean-source --nolog .
 
       - name: Collect packages
         run: |
           mkdir -p out
-          find /srv/chroot -name "*.deb" -exec mv {} out/ \;
+          mv *.deb out/ || true
+          mv ../*.deb out/ || true
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
