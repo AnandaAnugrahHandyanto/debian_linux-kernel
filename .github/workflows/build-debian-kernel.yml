@@ -38,7 +38,7 @@ jobs:
       - name: Create build environment
         run: |
           mkdir -p ~/.cache/sbuild
-          sbuild-createchroot --mode=unshare --make-sbuild-tarball=~/.cache/sbuild/sid-amd64.tar.zst sid --include=eatmydata,ccache
+          mmdebstrap --variant=buildd --include=eatmydata,ccache sid ~/.cache/sbuild/sid-amd64.tar.zst
 
       - name: Build kernel with sbuild
         run: |
@@ -55,3 +55,4 @@ jobs:
         with:
           name: savarez-kernel-deb
           path: out/
+          
