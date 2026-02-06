@@ -26,7 +26,8 @@ jobs:
             sbuild \
             mmdebstrap \
             uidmap \
-            debian-archive-keyring
+            debian-archive-keyring \
+            zstd
 
       - name: Configure sbuild
         run: |
