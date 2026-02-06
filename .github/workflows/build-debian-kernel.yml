@@ -32,9 +32,11 @@ jobs:
       - name: Configure sbuild
         run: |
           mkdir -p /github/home/.config/sbuild
-          echo "\$chroot_mode = 'unshare';" > /github/home/.config/sbuild/config.pl
-          echo "\$run_autopkgtest = 0;" >> /github/home/.config/sbuild/config.pl
-          echo "\$verbose = 1;" >> /github/home/.config/sbuild/config.pl
+          cat <<EOF > /github/home/.config/sbuild/config.pl
+          \$chroot_mode = 'unshare';
+          \$run_autopkgtest = 0;
+          \$verbose = 1;
+          EOF
 
       - name: Create build environment
         run: |
@@ -43,13 +45,17 @@ jobs:
 
       - name: Build kernel with sbuild
         run: |
+          # Memastikan kita berada di direktori yang berisi folder 'debian'
+          if [ ! -d "debian" ]; then
+            echo "Folder debian/ tidak ditemukan di root! Mencari di subdirektori..."
+            cd $(dirname $(find . -name control | grep debian/control | head -n 1) | sed 's/\/debian//') || exit 1
+          fi
           sbuild -d sid --no-clean-source --nolog --chroot-mode=unshare .
 
       - name: Collect packages
         run: |
           mkdir -p out
-          mv *.deb out/ || true
-          mv ../*.deb out/ || true
+          find . -maxdepth 2 -name "*.deb" -exec mv {} out/ \;
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
