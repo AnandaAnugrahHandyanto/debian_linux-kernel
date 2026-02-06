@@ -31,10 +31,10 @@ jobs:
 
       - name: Configure sbuild
         run: |
-          mkdir -p ~/.sbuild
-          echo "\$chroot_mode = 'unshare';" > ~/.sbuildrc
-          echo "\$run_autopkgtest = 0;" >> ~/.sbuildrc
-          echo "\$verbose = 1;" >> ~/.sbuildrc
+          mkdir -p /github/home/.config/sbuild
+          echo "\$chroot_mode = 'unshare';" > /github/home/.config/sbuild/config.pl
+          echo "\$run_autopkgtest = 0;" >> /github/home/.config/sbuild/config.pl
+          echo "\$verbose = 1;" >> /github/home/.config/sbuild/config.pl
 
       - name: Create build environment
         run: |
@@ -43,7 +43,7 @@ jobs:
 
       - name: Build kernel with sbuild
         run: |
-          sbuild -d sid --no-clean-source --nolog .
+          sbuild -d sid --no-clean-source --nolog --chroot-mode=unshare .
 
       - name: Collect packages
         run: |
