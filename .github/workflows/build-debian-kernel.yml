@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - name: Install dependencies
         run: |
@@ -45,17 +47,21 @@ jobs:
 
       - name: Build kernel with sbuild
         run: |
-          # Memastikan kita berada di direktori yang berisi folder 'debian'
-          if [ ! -d "debian" ]; then
-            echo "Folder debian/ tidak ditemukan di root! Mencari di subdirektori..."
-            cd $(dirname $(find . -name control | grep debian/control | head -n 1) | sed 's/\/debian//') || exit 1
+          DEBIAN_PATH=$(find . -maxdepth 3 -name control | grep "debian/control" | head -n 1)
+          
+          if [ -z "$DEBIAN_PATH" ]; then
+            exit 1
           fi
+
+          TARGET_DIR=$(dirname $(dirname "$DEBIAN_PATH"))
+          cd "$TARGET_DIR"
+          
           sbuild -d sid --no-clean-source --nolog --chroot-mode=unshare .
 
       - name: Collect packages
         run: |
           mkdir -p out
-          find . -maxdepth 2 -name "*.deb" -exec mv {} out/ \;
+          find . -name "*.deb" -exec mv {} out/ \;
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
