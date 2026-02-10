@@ -47,9 +47,10 @@ jobs:
 
       - name: Build kernel with sbuild
         run: |
-          DEBIAN_PATH=$(find . -maxdepth 3 -name control | grep "debian/control" | head -n 1)
+          DEBIAN_PATH=$(find . -name control | grep "debian/control" | head -n 1)
           
           if [ -z "$DEBIAN_PATH" ]; then
+            ls -R
             exit 1
           fi
 
