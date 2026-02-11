@@ -29,7 +29,10 @@ jobs:
             mmdebstrap \
             uidmap \
             debian-archive-keyring \
-            zstd
+            zstd \
+            python3 \
+            python3-jinja2 \
+            quilt
 
       - name: Configure sbuild
         run: |
@@ -45,18 +48,15 @@ jobs:
           mkdir -p ~/.cache/sbuild
           mmdebstrap --variant=buildd --include=eatmydata,ccache sid ~/.cache/sbuild/sid-amd64.tar.zst
 
+      - name: Generate control file
+        run: |
+          chmod +x debian/rules
+          chmod +x debian/bin/* || true
+          apt-get install -y $(control--setup-deps 2>/dev/null || echo "python3-jinja2")
+          ./debian/rules debian/control
+
       - name: Build kernel with sbuild
         run: |
-          DEBIAN_PATH=$(find . -name control | grep "debian/control" | head -n 1)
-          
-          if [ -z "$DEBIAN_PATH" ]; then
-            ls -R
-            exit 1
-          fi
-
-          TARGET_DIR=$(dirname $(dirname "$DEBIAN_PATH"))
-          cd "$TARGET_DIR"
-          
           sbuild -d sid --no-clean-source --nolog --chroot-mode=unshare .
 
       - name: Collect packages
