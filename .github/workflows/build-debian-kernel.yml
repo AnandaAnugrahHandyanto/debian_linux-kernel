@@ -55,7 +55,7 @@ jobs:
         run: |
           chmod +x debian/rules
           chmod +x debian/bin/* || true
-          ./debian/rules debian/control
+          ./debian/rules debian/control || true
 
       - name: Build kernel with sbuild
         run: |
