@@ -34,7 +34,8 @@ jobs:
             python3-jinja2 \
             python3-dacite \
             python3-debian \
-            quilt
+            quilt \
+            kernel-wedge
 
       - name: Configure sbuild
         run: |
