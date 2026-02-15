@@ -37,8 +37,10 @@ jobs:
             quilt \
             kernel-wedge
 
-      - name: Configure sbuild
+      - name: Configure sbuild and UID mapping
         run: |
+          echo "root:100000:65536" | tee /etc/subuid
+          echo "root:100000:65536" | tee /etc/subgid
           mkdir -p /github/home/.config/sbuild
           cat <<EOF > /github/home/.config/sbuild/config.pl
           \$chroot_mode = 'unshare';
@@ -61,6 +63,7 @@ jobs:
         run: |
           mkdir -p debian/source
           echo "3.0 (native)" > debian/source/format
+          rm -f debian/source/local-options
           
           sbuild -d sid \
             --no-clean-source \
