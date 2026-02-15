@@ -59,11 +59,13 @@ jobs:
 
       - name: Build kernel with sbuild
         run: |
+          mkdir -p debian/source
+          echo "3.0 (native)" > debian/source/format
+          
           sbuild -d sid \
             --no-clean-source \
             --nolog \
             --chroot-mode=unshare \
-            --no-source \
             --debbuildopt="-b" .
 
       - name: Collect packages
