@@ -59,7 +59,12 @@ jobs:
 
       - name: Build kernel with sbuild
         run: |
-          sbuild -d sid --no-clean-source --nolog --chroot-mode=unshare .
+          sbuild -d sid \
+            --no-clean-source \
+            --nolog \
+            --chroot-mode=unshare \
+            --no-source \
+            --debbuildopt="-b" .
 
       - name: Collect packages
         run: |
