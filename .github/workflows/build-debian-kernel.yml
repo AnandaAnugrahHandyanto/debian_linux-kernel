@@ -62,7 +62,7 @@ jobs:
             --no-clean-source \
             --nolog \
             --chroot-mode=unshare \
-            --debbuildopt="-B" .
+            --arch-any .
 
       - name: Collect packages
         run: |
