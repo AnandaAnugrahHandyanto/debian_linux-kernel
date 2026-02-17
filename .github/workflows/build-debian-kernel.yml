@@ -21,21 +21,9 @@ jobs:
         run: |
           apt-get update
           apt-get install -y \
-            git \
-            sudo \
-            ca-certificates \
-            build-essential \
-            sbuild \
-            mmdebstrap \
-            uidmap \
-            debian-archive-keyring \
-            zstd \
-            python3 \
-            python3-jinja2 \
-            python3-dacite \
-            python3-debian \
-            quilt \
-            kernel-wedge
+            git sudo ca-certificates build-essential sbuild mmdebstrap \
+            uidmap debian-archive-keyring zstd python3 python3-jinja2 \
+            python3-dacite python3-debian quilt kernel-wedge
 
       - name: Configure sbuild and UID mapping
         run: |
@@ -65,19 +53,23 @@ jobs:
           echo "3.0 (native)" > debian/source/format
           rm -f debian/source/local-options
           
+          mkdir -p .pc
+          touch .pc/.quilt_series
+          touch .pc/.quilt_applied
+          
           sbuild -d sid \
             --no-clean-source \
             --nolog \
             --chroot-mode=unshare \
-            --debbuildopt="-b" .
+            --debbuildopt="-B" .
 
       - name: Collect packages
         run: |
           mkdir -p out
-          find . -name "*.deb" -exec mv {} out/ \;
+          find . -maxdepth 2 -name "*.deb" -exec mv {} out/ \;
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/artifact@v4
         with:
           name: savarez-kernel-deb
           path: out/
