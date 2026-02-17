@@ -54,8 +54,9 @@ jobs:
           rm -f debian/source/local-options
           
           mkdir -p .pc
-          touch .pc/.quilt_series
-          touch .pc/.quilt_applied
+          touch .pc/applied-patches
+          mkdir -p debian/stamps
+          touch debian/stamps/source
           
           sbuild -d sid \
             --no-clean-source \
@@ -69,7 +70,7 @@ jobs:
           find . -maxdepth 2 -name "*.deb" -exec mv {} out/ \;
 
       - name: Upload artifacts
-        uses: actions/artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           name: savarez-kernel-deb
           path: out/
