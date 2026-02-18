@@ -20,10 +20,7 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update
-          apt-get install -y \
-            git sudo ca-certificates build-essential sbuild mmdebstrap \
-            uidmap debian-archive-keyring zstd python3 python3-jinja2 \
-            python3-dacite python3-debian quilt kernel-wedge
+          apt-get install -y git sudo ca-certificates build-essential sbuild mmdebstrap uidmap debian-archive-keyring zstd python3 python3-jinja2 python3-dacite python3-debian quilt kernel-wedge
 
       - name: Configure sbuild and UID mapping
         run: |
@@ -49,25 +46,15 @@ jobs:
 
       - name: Build kernel with sbuild
         run: |
-          # Paksa format native agar tidak mencari tarball luar
           mkdir -p debian/source
           echo "3.0 (native)" > debian/source/format
           rm -f debian/source/local-options
-          
-          # Mock folder quilt agar tidak error 'test -d .pc'
           mkdir -p .pc
           touch .pc/applied-patches
           mkdir -p debian/stamps
           touch debian/stamps/source
-          
-          # Gunakan profil 'nodoc' untuk mematikan build dokumentasi
-          # Gunakan --arch-any agar sbuild hanya menjalankan 'dpkg-buildpackage -B'
           export DEB_BUILD_PROFILES="nodoc"
-          sbuild -d sid \
-            --no-clean-source \
-            --nolog \
-            --chroot-mode=unshare \
-            --arch-any .
+          sbuild -d sid --no-clean-source --nolog --chroot-mode=unshare --arch-any .
 
       - name: Collect packages
         run: |
@@ -79,4 +66,3 @@ jobs:
         with:
           name: savarez-kernel-deb
           path: out/
-          
