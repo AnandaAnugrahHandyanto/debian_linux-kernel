@@ -50,8 +50,8 @@ jobs:
           rm -rf debian/patches
           VERSION=$(dpkg-parsechangelog -S Version | cut -d'-' -f1)
           SOURCE=$(dpkg-parsechangelog -S Source)
-          tar --exclude=debian -cJf ../${SOURCE}_${VERSION}.orig.tar.xz .
-          dpkg-source -b .
+          tar --exclude=debian --exclude=.github -cJf ../${SOURCE}_${VERSION}.orig.tar.xz .
+          dpkg-source -i'\.github' -b .
           export DEB_BUILD_PROFILES="nodoc,pkg.linux.notools,pkg.linux.quick"
           sbuild -d sid --no-clean-source --nolog --chroot-mode=unshare --arch-any --no-arch-all ../${SOURCE}_*.dsc
 
