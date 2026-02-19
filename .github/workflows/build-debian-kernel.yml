@@ -53,8 +53,8 @@ jobs:
           touch .pc/applied-patches
           mkdir -p debian/stamps
           touch debian/stamps/source
-          export DEB_BUILD_PROFILES="nodoc"
-          sbuild -d sid --no-clean-source --nolog --chroot-mode=unshare --arch-any .
+          export DEB_BUILD_PROFILES="nodoc,pkg.linux.notools,pkg.linux.quick"
+          sbuild -d sid --no-clean-source --nolog --chroot-mode=unshare --debbuildopt="-B" .
 
       - name: Collect packages
         run: |
@@ -66,3 +66,4 @@ jobs:
         with:
           name: savarez-kernel-deb
           path: out/
+          
