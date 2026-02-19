@@ -46,6 +46,7 @@ jobs:
 
       - name: Build kernel with sbuild
         run: |
+          find . -name "__pycache__" -type d -exec rm -rf {} +
           VERSION=$(dpkg-parsechangelog -S Version | cut -d'-' -f1)
           SOURCE=$(dpkg-parsechangelog -S Source)
           tar --exclude=debian -cJf ../${SOURCE}_${VERSION}.orig.tar.xz .
