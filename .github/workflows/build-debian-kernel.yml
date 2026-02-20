@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update
-          apt-get install -y git sudo ca-certificates build-essential mmdebstrap uidmap debian-archive-keyring zstd python3 python3-jinja2 python3-dacite python3-debian quilt kernel-wedge devscripts bc kmod libelf-dev libssl-dev bison flex rsync
+          apt-get install -y git sudo ca-certificates build-essential mmdebstrap uidmap debian-archive-keyring zstd python3 python3-jinja2 python3-dacite python3-debian quilt kernel-wedge devscripts bc kmod libelf-dev libssl-dev bison flex rsync lz4 dwarves rustc rust-src bindgen gcc-15
 
       - name: Build kernel
         run: |
