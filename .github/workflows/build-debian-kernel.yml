@@ -20,40 +20,17 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update
-          apt-get install -y git sudo ca-certificates build-essential sbuild mmdebstrap uidmap debian-archive-keyring zstd python3 python3-jinja2 python3-dacite python3-debian quilt kernel-wedge devscripts
+          apt-get install -y git sudo ca-certificates build-essential mmdebstrap uidmap debian-archive-keyring zstd python3 python3-jinja2 python3-dacite python3-debian quilt kernel-wedge devscripts bc kmod libelf-dev libssl-dev bison flex rsync
 
-      - name: Configure sbuild and UID mapping
-        run: |
-          echo "root:100000:65536" | tee /etc/subuid
-          echo "root:100000:65536" | tee /etc/subgid
-          mkdir -p /github/home/.config/sbuild
-          cat <<EOF > /github/home/.config/sbuild/config.pl
-          \$chroot_mode = 'unshare';
-          \$run_autopkgtest = 0;
-          \$verbose = 1;
-          EOF
-
-      - name: Create build environment
-        run: |
-          mkdir -p ~/.cache/sbuild
-          mmdebstrap --variant=buildd --include=eatmydata,ccache sid ~/.cache/sbuild/sid-amd64.tar.zst
-
-      - name: Generate control file
-        run: |
-          chmod +x debian/rules
-          chmod +x debian/bin/* || true
-          ./debian/rules debian/control || true
-
-      - name: Build kernel with sbuild
+      - name: Build kernel
         run: |
           find . -name "__pycache__" -type d -exec rm -rf {} +
           rm -rf debian/patches
-          VERSION=$(dpkg-parsechangelog -S Version | cut -d'-' -f1)
-          SOURCE=$(dpkg-parsechangelog -S Source)
-          tar --exclude=debian --exclude=.github -cJf ../${SOURCE}_${VERSION}.orig.tar.xz .
-          dpkg-source -i'\.github' -b .
+          chmod +x debian/rules
+          chmod +x debian/bin/* || true
+          ./debian/rules debian/control || true
           export DEB_BUILD_PROFILES="nodoc,pkg.linux.notools,pkg.linux.quick"
-          sbuild -d sid --no-clean-source --nolog --chroot-mode=unshare --arch-any --no-arch-all ../${SOURCE}_*.dsc
+          dpkg-buildpackage -us -uc -B -Pnodoc,pkg.linux.notools,pkg.linux.quick
 
       - name: Collect packages
         run: |
