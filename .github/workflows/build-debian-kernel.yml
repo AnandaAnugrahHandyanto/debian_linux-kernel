@@ -30,7 +30,7 @@ jobs:
           chmod +x debian/bin/* || true
           ./debian/rules debian/control || true
           export DEB_BUILD_PROFILES="nodoc,pkg.linux.notools,pkg.linux.quick"
-          dpkg-buildpackage -us -uc -B -Pnodoc,pkg.linux.notools,pkg.linux.quick
+          dpkg-buildpackage -us -uc -B -Pnodoc,pkg.linux.notools,pkg.linux.quick -d
 
       - name: Collect packages
         run: |
