@@ -29,6 +29,9 @@ jobs:
           chmod +x debian/rules
           chmod +x debian/bin/* || true
           ./debian/rules debian/control || true
+          mkdir -p .pc
+          mkdir -p debian/stamps
+          touch debian/stamps/source
           export DEB_BUILD_PROFILES="nodoc,pkg.linux.notools,pkg.linux.quick"
           dpkg-buildpackage -us -uc -B -Pnodoc,pkg.linux.notools,pkg.linux.quick -d
 
