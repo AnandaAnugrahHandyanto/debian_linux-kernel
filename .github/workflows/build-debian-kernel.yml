@@ -32,6 +32,7 @@ jobs:
           mkdir -p .pc
           echo 2 > .pc/.version
           grep -q "listnewconfig:" Makefile || printf "\nlistnewconfig:\n\t@echo skipping\n" >> Makefile
+          grep -q "oldconfig:" Makefile || printf "\noldconfig:\n\t@echo skipping\n" >> Makefile
           mkdir -p debian/stamps
           touch debian/stamps/source
           mkdir -p debian/build/build_amd64_none_test
