@@ -52,13 +52,9 @@ jobs:
           subjectKeyIdentifier=hash
           authorityKeyIdentifier=keyid
           EOF
-          mkdir -p debian/stamps
-          touch debian/stamps/source
-          mkdir -p debian/build/build_amd64_none_test
-          touch debian/stamps/setup_amd64_none_test
           export DEB_BUILD_PROFILES="nodoc,pkg.linux.notools,pkg.linux.quick"
           export DEBIAN_KERNEL_DISABLE_BUILDCHECK=y
-          dpkg-buildpackage -us -uc -B -Pnodoc,pkg.linux.notools,pkg.linux.quick -d -nc
+          dpkg-buildpackage -us -uc -B -Pnodoc,pkg.linux.notools,pkg.linux.quick -d
 
       - name: Collect packages
         run: |
