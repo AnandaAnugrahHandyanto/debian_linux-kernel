@@ -28,14 +28,17 @@ jobs:
           rm -rf debian/patches
           chmod +x debian/rules
           chmod +x debian/bin/* || true
-          ./debian/rules debian/control || true
+          
           mkdir -p .pc
           echo 2 > .pc/.version
+          
           echo "#!/bin/sh" > debian/bin/buildcheck.py
           echo "exit 0" >> debian/bin/buildcheck.py
           chmod +x debian/bin/buildcheck.py
+          
           grep -q "listnewconfig:" Makefile || printf "\nlistnewconfig:\n\t@echo skipping\n" >> Makefile
           grep -q "oldconfig:" Makefile || printf "\noldconfig:\n\t@echo skipping\n" >> Makefile
+          
           mkdir -p certs
           cat <<EOF > certs/default_x509.genkey
           [ req ]
@@ -52,13 +55,18 @@ jobs:
           subjectKeyIdentifier=hash
           authorityKeyIdentifier=keyid
           EOF
+
           mkdir -p debian/build/build_amd64_none_test
           ln -sf ../.. debian/build/source_none
-          printf "MAKEARGS := -C ../../..\n\nall:\n\t\$(MAKE) \$(MAKEARGS)\n\n%%:\n\t\$(MAKE) \$(MAKEARGS) \$@\n" > debian/build/build_amd64_none_test/Makefile
-          cp debian/config/amd64/config.test debian/build/build_amd64_none_test/.config || touch debian/build/build_amd64_none_test/.config
-          mkdir -p debian/stamps
-          touch debian/stamps/source
-          touch debian/stamps/setup_amd64_none_test
+          
+          cat <<EOF > debian/build/build_amd64_none_test/Makefile
+          src := ../source_none
+          obj := .
+          include \$(src)/Makefile
+          EOF
+
+          ./debian/rules debian/control || true
+          
           export DEB_BUILD_PROFILES="nodoc,pkg.linux.notools,pkg.linux.quick"
           export DEBIAN_KERNEL_DISABLE_BUILDCHECK=y
           dpkg-buildpackage -us -uc -B -Pnodoc,pkg.linux.notools,pkg.linux.quick -d -nc
