@@ -52,11 +52,10 @@ jobs:
           subjectKeyIdentifier=hash
           authorityKeyIdentifier=keyid
           EOF
-          mkdir -p debian/build
-          ln -sf ../.. debian/build/source_none
           mkdir -p debian/build/build_amd64_none_test
-          printf "include ../source_none/Makefile\n" > debian/build/build_amd64_none_test/Makefile
-          python3 debian/bin/kconfig.py debian/build/build_amd64_none_test/.config debian/config/config.test debian/config/amd64/config.test
+          ln -sf ../.. debian/build/source_none
+          printf "MAKEARGS := -C ../../..\n\nall:\n\t\$(MAKE) \$(MAKEARGS)\n\n%%:\n\t\$(MAKE) \$(MAKEARGS) \$@\n" > debian/build/build_amd64_none_test/Makefile
+          cp debian/config/amd64/config.test debian/build/build_amd64_none_test/.config || touch debian/build/build_amd64_none_test/.config
           mkdir -p debian/stamps
           touch debian/stamps/source
           touch debian/stamps/setup_amd64_none_test
