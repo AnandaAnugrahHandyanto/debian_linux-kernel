@@ -36,8 +36,8 @@ jobs:
           echo "exit 0" >> debian/bin/buildcheck.py
           chmod +x debian/bin/buildcheck.py
           
-          printf "\nlistnewconfig:\n\tmkdir -p \$(O) && printf 'src := \$(CURDIR)\\nobj := .\\ninclude \$\$(src)/Makefile\\n' > \$(O)/Makefile\n" >> Makefile
-          printf "\noldconfig:\n\tmkdir -p \$(O) && printf 'src := \$(CURDIR)\\nobj := .\\ninclude \$\$(src)/Makefile\\n' > \$(O)/Makefile\n" >> Makefile
+          printf "\nlistnewconfig:\n\tmkdir -p \$(O)\n\tprintf 'src := \$(CURDIR)\\nobj := .\\ninclude \$\$(src)/Makefile\\n' > \$(O)/Makefile\n" >> Makefile
+          printf "\noldconfig:\n\tmkdir -p \$(O)\n\tprintf 'src := \$(CURDIR)\\nobj := .\\ninclude \$\$(src)/Makefile\\n' > \$(O)/Makefile\n" >> Makefile
           
           mkdir -p certs
           cat <<EOF > certs/default_x509.genkey
