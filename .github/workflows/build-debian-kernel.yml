@@ -36,8 +36,20 @@ jobs:
           echo "exit 0" >> debian/bin/buildcheck.py
           chmod +x debian/bin/buildcheck.py
           
-          printf "\nlistnewconfig:\n\tmkdir -p \$(O)\n\tprintf 'src := \$(CURDIR)\\nobj := .\\ninclude \$\$(src)/Makefile\\n' > \$(O)/Makefile\n" >> Makefile
-          printf "\noldconfig:\n\tmkdir -p \$(O)\n\tprintf 'src := \$(CURDIR)\\nobj := .\\ninclude \$\$(src)/Makefile\\n' > \$(O)/Makefile\n" >> Makefile
+          # Gunakan heredoc untuk membuat file fragmen Makefile dengan Tab asli
+          cat <<EOF > fix_makefile.txt
+          listnewconfig:
+          	mkdir -p \$(O)
+          	echo "include \$(CURDIR)/Makefile" > \$(O)/Makefile
+          
+          oldconfig:
+          	mkdir -p \$(O)
+          	echo "include \$(CURDIR)/Makefile" > \$(O)/Makefile
+          
+          EOF
+          
+          # Gabungkan fragmen ke bagian atas Makefile asli
+          cat fix_makefile.txt Makefile > Makefile.new && mv Makefile.new Makefile
           
           mkdir -p certs
           cat <<EOF > certs/default_x509.genkey
