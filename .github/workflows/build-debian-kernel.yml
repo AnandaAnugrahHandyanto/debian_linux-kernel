@@ -36,10 +36,23 @@ jobs:
           echo "exit 0" >> debian/bin/buildcheck.py
           chmod +x debian/bin/buildcheck.py
 
-          # Injeksi target listnewconfig dan oldconfig dengan Tab asli ke baris pertama Makefile
-          sed -i '1i listnewconfig:\n\tmkdir -p $(O)\n\techo "include $(CURDIR)/Makefile" > $(O)/Makefile\noldconfig:\n\tmkdir -p $(O)\n\techo "include $(CURDIR)/Makefile" > $(O)/Makefile' Makefile
-          # Pastikan karakter \t benar-benar menjadi Tab
-          sed -i 's/^\\t/\t/' Makefile
+          # Pastikan Makefile ada, jika tidak buat Makefile kosong untuk diinjeksi
+          [ ! -f Makefile ] && touch Makefile
+
+          # Gunakan heredoc untuk membuat fragmen Makefile dengan Tab asli agar aman
+          cat <<EOF > fix_makefile.txt
+          listnewconfig:
+          	mkdir -p \$(O)
+          	echo "include \$(CURDIR)/Makefile" > \$(O)/Makefile
+          
+          oldconfig:
+          	mkdir -p \$(O)
+          	echo "include \$(CURDIR)/Makefile" > \$(O)/Makefile
+          
+          EOF
+
+          # Masukkan ke baris paling atas
+          cat fix_makefile.txt Makefile > Makefile.new && mv Makefile.new Makefile
 
           mkdir -p certs
           cat <<EOF > certs/default_x509.genkey
