@@ -36,22 +36,17 @@ jobs:
           echo "exit 0" >> debian/bin/buildcheck.py
           chmod +x debian/bin/buildcheck.py
 
-          # Pastikan Makefile ada, jika tidak buat Makefile kosong untuk diinjeksi
           [ ! -f Makefile ] && touch Makefile
 
-          # Gunakan heredoc untuk membuat fragmen Makefile dengan Tab asli agar aman
           cat <<EOF > fix_makefile.txt
           listnewconfig:
-          	mkdir -p \$(O)
-          	echo "include \$(CURDIR)/Makefile" > \$(O)/Makefile
+          	@if [ -n "\$(O)" ]; then mkdir -p \$(O); echo "include \$(CURDIR)/Makefile" > \$(O)/Makefile; fi
           
           oldconfig:
-          	mkdir -p \$(O)
-          	echo "include \$(CURDIR)/Makefile" > \$(O)/Makefile
+          	@if [ -n "\$(O)" ]; then mkdir -p \$(O); echo "include \$(CURDIR)/Makefile" > \$(O)/Makefile; fi
           
           EOF
 
-          # Masukkan ke baris paling atas
           cat fix_makefile.txt Makefile > Makefile.new && mv Makefile.new Makefile
 
           mkdir -p certs
