@@ -39,10 +39,12 @@ jobs:
           [ ! -f Makefile ] && touch Makefile
 
           cat <<'EOF' > fix_makefile.txt
-          listnewconfig oldconfig:
+          # Proxy untuk target konfigurasi dan build utama
+          listnewconfig oldconfig %:
           	@if [ -n "$(O)" ]; then \
           		mkdir -p $(O); \
-          		printf "src := $(CURDIR)\nobj := .\ninclude \$$(src)/Makefile\n" > $(O)/Makefile; \
+          		printf "src := $(CURDIR)\ninclude \$$(src)/Makefile\n" > $(O)/Makefile; \
+          		$(MAKE) -C $(O) src=$(CURDIR) $@; \
           	fi
 
           EOF
