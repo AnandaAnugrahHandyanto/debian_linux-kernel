@@ -39,21 +39,15 @@ jobs:
           [ ! -f Makefile ] && touch Makefile
 
           cat <<'EOF' > fix_makefile.txt
-          ifeq ($(MAKECMDGOALS),)
-          __default: all
-          endif
-
           ifneq ($(O),)
-          ifneq ($(CURDIR),$(realpath $(O)))
-          
-          listnewconfig oldconfig %:
+          _prepare_o:
           	@mkdir -p $(O)
           	@if [ ! -f "$(O)/Makefile" ]; then \
           		printf "src := $(CURDIR)\ninclude \$$(src)/Makefile\n" > $(O)/Makefile; \
           	fi
-          	$(MAKE) -C $(O) src=$(CURDIR) $@
 
-          endif
+          listnewconfig oldconfig: _prepare_o
+          	$(MAKE) -C $(O) src=$(CURDIR) $@
           endif
           EOF
 
@@ -93,4 +87,3 @@ jobs:
         with:
           name: savarez-kernel-deb
           path: out/
-          
