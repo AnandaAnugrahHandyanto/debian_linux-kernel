@@ -38,14 +38,18 @@ jobs:
 
           [ ! -f Makefile ] && touch Makefile
 
-          cat <<EOF >> Makefile
-
+          cat <<'EOF' > fix_makefile.txt
           listnewconfig oldconfig:
-          	@if [ -n "\$(O)" ]; then \\
-          		mkdir -p \$(O); \\
-          		printf "src := \$(CURDIR)\\nobj := .\\ninclude \$\$(src)/Makefile\\n" > \$(O)/Makefile; \\
+          	@if [ -n "$(O)" ]; then \
+          		mkdir -p $(O); \
+          		echo "src := $(CURDIR)" > $(O)/Makefile; \
+          		echo "obj := ." >> $(O)/Makefile; \
+          		echo "include $$(src)/Makefile" >> $(O)/Makefile; \
           	fi
+
           EOF
+
+          cat fix_makefile.txt Makefile > Makefile.new && mv Makefile.new Makefile
 
           mkdir -p certs
           cat <<EOF > certs/default_x509.genkey
@@ -68,6 +72,7 @@ jobs:
           
           export DEB_BUILD_PROFILES="nodoc,pkg.linux.notools,pkg.linux.quick"
           export DEBIAN_KERNEL_DISABLE_BUILDCHECK=y
+          
           dpkg-buildpackage -us -uc -B -Pnodoc,pkg.linux.notools,pkg.linux.quick -d
 
       - name: Collect packages
@@ -80,4 +85,3 @@ jobs:
         with:
           name: savarez-kernel-deb
           path: out/
-          
