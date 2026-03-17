@@ -42,9 +42,7 @@ jobs:
           listnewconfig oldconfig:
           	@if [ -n "$(O)" ]; then \
           		mkdir -p $(O); \
-          		echo "src := $(CURDIR)" > $(O)/Makefile; \
-          		echo "obj := ." >> $(O)/Makefile; \
-          		echo "include $$(src)/Makefile" >> $(O)/Makefile; \
+          		printf "src := $(CURDIR)\nobj := .\ninclude \$$(src)/Makefile\n" > $(O)/Makefile; \
           	fi
 
           EOF
@@ -85,3 +83,4 @@ jobs:
         with:
           name: savarez-kernel-deb
           path: out/
+          
