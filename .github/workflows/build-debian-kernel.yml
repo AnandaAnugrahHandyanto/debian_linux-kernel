@@ -38,22 +38,24 @@ jobs:
 
           [ ! -f Makefile ] && touch Makefile
 
-          cat <<EOF > fix_makefile.txt
-          ifneq (\$(O),)
-          ifeq (\$(origin KBUILD_SRC), undefined)
+          cat <<'EOF' > fix_makefile.txt
+          ifneq ($(O),)
+          ifeq ($(origin KBUILD_SRC), undefined)
 
           listnewconfig oldconfig:
-          	@mkdir -p \$(O)
-          	@printf "src := \$(CURDIR)\ninclude \$(src)/Makefile\n" > \$(O)/Makefile
-          	@\$(MAKE) -C \$(O) KBUILD_SRC=\$(CURDIR) src=\$(CURDIR) \$@
+          	@mkdir -p $(O)
+          	@echo "src := $(CURDIR)" > $(O)/Makefile
+          	@echo "include $(CURDIR)/Makefile" >> $(O)/Makefile
+          	@$(MAKE) -C $(O) KBUILD_SRC=$(CURDIR) src=$(CURDIR) $@
           	@exit 0
 
           %:
-          	@mkdir -p \$(O)
-          	@if [ ! -f "\$(O)/Makefile" ]; then \\
-          		printf "src := \$(CURDIR)\ninclude \$(src)/Makefile\n" > \$(O)/Makefile; \\
+          	@mkdir -p $(O)
+          	@if [ ! -f "$(O)/Makefile" ]; then \
+          		echo "src := $(CURDIR)" > $(O)/Makefile; \
+          		echo "include $(CURDIR)/Makefile" >> $(O)/Makefile; \
           	fi
-          	@\$(MAKE) -C \$(O) KBUILD_SRC=\$(CURDIR) src=\$(CURDIR) \$@
+          	@$(MAKE) -C $(O) KBUILD_SRC=$(CURDIR) src=$(CURDIR) $@
 
           endif
           endif
