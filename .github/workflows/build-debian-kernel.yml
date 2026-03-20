@@ -41,9 +41,10 @@ jobs:
           cat <<'EOF' > fix_makefile.txt
           ifneq ($(O),)
           ifeq ($(src),)
-          listnewconfig oldconfig:
+          listnewconfig oldconfig %:
           	@mkdir -p $(O)
-          	@printf "src := $(CURDIR)\ninclude \$$(src)/Makefile\n" > $(O)/Makefile
+          	@echo "src := $(CURDIR)" > $(O)/Makefile
+          	@echo "include \$(src)/Makefile" >> $(O)/Makefile
           	@$(MAKE) -C $(O) src=$(CURDIR) $@
           	@exit 0
           endif
