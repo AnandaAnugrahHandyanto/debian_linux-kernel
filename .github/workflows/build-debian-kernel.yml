@@ -42,17 +42,20 @@ jobs:
           ifneq ($(O),)
           ifeq ($(origin KBUILD_SRC), undefined)
 
-          listnewconfig:
+          define create_obj_makefile
           	@mkdir -p $(O)
-          	@$(MAKE) -C $(O) KBUILD_SRC=$(CURDIR) -f $(CURDIR)/Makefile $@
+          	@echo "src := $(CURDIR)" > $(O)/Makefile
+          	@echo "obj := . " >> $(O)/Makefile
+          	@echo "include \$$(src)/Makefile" >> $(O)/Makefile
+          endef
 
-          oldconfig:
-          	@mkdir -p $(O)
-          	@$(MAKE) -C $(O) KBUILD_SRC=$(CURDIR) -f $(CURDIR)/Makefile $@
+          listnewconfig oldconfig:
+          	$(call create_obj_makefile)
+          	@$(MAKE) -C $(O) KBUILD_SRC=$(CURDIR) $@
 
           %:
-          	@mkdir -p $(O)
-          	@$(MAKE) -C $(O) KBUILD_SRC=$(CURDIR) -f $(CURDIR)/Makefile $@
+          	$(call create_obj_makefile)
+          	@$(MAKE) -C $(O) KBUILD_SRC=$(CURDIR) $@
 
           endif
           endif
