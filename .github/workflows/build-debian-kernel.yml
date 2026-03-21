@@ -44,19 +44,19 @@ jobs:
 
           listnewconfig oldconfig:
           	@mkdir -p $(O)
-          	@echo "KBUILD_SRC := $(CURDIR)" > $(O)/Makefile
-          	@echo "include $(CURDIR)/Makefile" >> $(O)/Makefile
-          	@$(MAKE) -C $(O) KBUILD_SRC=$(CURDIR) $@
+          	@$(MAKE) -C $(O) KBUILD_SRC=$(CURDIR) -f $(CURDIR)/Makefile $@
 
           %:
           	@mkdir -p $(O)
-          	@if [ ! -f "$(O)/Makefile" ]; then \
-          		echo "KBUILD_SRC := $(CURDIR)" > $(O)/Makefile; \
-          		echo "include $(CURDIR)/Makefile" >> $(O)/Makefile; \
-          	fi
-          	@$(MAKE) -C $(O) KBUILD_SRC=$(CURDIR) $@
+          	@$(MAKE) -C $(O) KBUILD_SRC=$(CURDIR) -f $(CURDIR)/Makefile $@
 
           endif
+
+          listnewconfig:
+          	@if [ -f .config ]; then \
+          		touch .config; \
+          	fi
+          	@echo "Stub for listnewconfig"
           endif
           EOF
 
