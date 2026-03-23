@@ -42,21 +42,27 @@ jobs:
           ifneq ($(O),)
           ifeq ($(origin KBUILD_SRC), undefined)
 
-          listnewconfig oldconfig:
+          %config:
+          	@mkdir -p $(O)
+          	@$(MAKE) -C $(O) KBUILD_SRC=$(CURDIR) -f $(CURDIR)/Makefile $@
+
+          listnewconfig:
+          	@mkdir -p $(O)
+          	@$(MAKE) -C $(O) KBUILD_SRC=$(CURDIR) -f $(CURDIR)/Makefile $@
+
+          oldconfig:
           	@mkdir -p $(O)
           	@$(MAKE) -C $(O) KBUILD_SRC=$(CURDIR) -f $(CURDIR)/Makefile $@
 
           %:
           	@mkdir -p $(O)
-          	@$(MAKE) -C $(O) KBUILD_SRC=$(CURDIR) -f $(CURDIR)/Makefile $@
+          	@if [ ! -f "$(O)/Makefile" ]; then \
+          		echo "KBUILD_SRC := $(CURDIR)" > $(O)/Makefile; \
+          		echo "include \$$(KBUILD_SRC)/Makefile" >> $(O)/Makefile; \
+          	fi
+          	@$(MAKE) -C $(O) KBUILD_SRC=$(CURDIR) $@
 
           endif
-
-          listnewconfig:
-          	@if [ -f .config ]; then \
-          		touch .config; \
-          	fi
-          	@echo "Stub for listnewconfig"
           endif
           EOF
 
@@ -96,3 +102,4 @@ jobs:
         with:
           name: savarez-kernel-deb
           path: out/
+          
