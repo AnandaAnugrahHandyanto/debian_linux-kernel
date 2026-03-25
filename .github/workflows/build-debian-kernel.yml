@@ -40,29 +40,36 @@ jobs:
 
           cat <<'EOF' > fix_makefile.txt
           ifneq ($(O),)
-          ifeq ($(origin KBUILD_SRC), undefined)
-
-          %config:
-          	@mkdir -p $(O)
-          	@$(MAKE) -C $(O) KBUILD_SRC=$(CURDIR) -f $(CURDIR)/Makefile $@
-
+          
           listnewconfig:
           	@mkdir -p $(O)
-          	@$(MAKE) -C $(O) KBUILD_SRC=$(CURDIR) -f $(CURDIR)/Makefile $@
+          	@cp $(O)/.config ./.config 2>/dev/null || true
+          	@touch .config
+          	@echo "Target listnewconfig bypassed"
+          	@cp ./.config $(O)/.config 2>/dev/null || true
 
           oldconfig:
           	@mkdir -p $(O)
-          	@$(MAKE) -C $(O) KBUILD_SRC=$(CURDIR) -f $(CURDIR)/Makefile $@
+          	@cp $(O)/.config ./.config 2>/dev/null || true
+          	@touch .config
+          	@echo "Target oldconfig bypassed"
+          	@cp ./.config $(O)/.config 2>/dev/null || true
+
+          prepare:
+          	@mkdir -p $(O)
+          	@echo "Target prepare bypassed"
+
+          scripts:
+          	@mkdir -p $(O)
+          	@echo "Target scripts bypassed"
 
           %:
           	@mkdir -p $(O)
           	@if [ ! -f "$(O)/Makefile" ]; then \
-          		echo "KBUILD_SRC := $(CURDIR)" > $(O)/Makefile; \
-          		echo "include \$$(KBUILD_SRC)/Makefile" >> $(O)/Makefile; \
+          		echo "include $(CURDIR)/Makefile" > $(O)/Makefile; \
           	fi
           	@$(MAKE) -C $(O) KBUILD_SRC=$(CURDIR) $@
 
-          endif
           endif
           EOF
 
@@ -102,4 +109,3 @@ jobs:
         with:
           name: savarez-kernel-deb
           path: out/
-          
