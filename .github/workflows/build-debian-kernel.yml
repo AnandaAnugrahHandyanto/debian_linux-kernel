@@ -40,36 +40,26 @@ jobs:
 
           cat <<'EOF' > fix_makefile.txt
           ifneq ($(O),)
-          
-          listnewconfig:
+          ifeq ($(origin KBUILD_SRC), undefined)
+
+          _all:
           	@mkdir -p $(O)
-          	@cp $(O)/.config ./.config 2>/dev/null || true
+          	@echo "include $(CURDIR)/Makefile" > $(O)/Makefile
+          	@$(MAKE) -C $(O) KBUILD_SRC=$(CURDIR) $(MAKECMDGOALS)
+
+          $(MAKECMDGOALS): _all
+          	@:
+
+          listnewconfig oldconfig all: _all
+          	@:
+
+          endif
+          endif
+
+          ifndef O
+          listnewconfig oldconfig:
+          	@echo "Bypassing config target"
           	@touch .config
-          	@echo "Target listnewconfig bypassed"
-          	@cp ./.config $(O)/.config 2>/dev/null || true
-
-          oldconfig:
-          	@mkdir -p $(O)
-          	@cp $(O)/.config ./.config 2>/dev/null || true
-          	@touch .config
-          	@echo "Target oldconfig bypassed"
-          	@cp ./.config $(O)/.config 2>/dev/null || true
-
-          prepare:
-          	@mkdir -p $(O)
-          	@echo "Target prepare bypassed"
-
-          scripts:
-          	@mkdir -p $(O)
-          	@echo "Target scripts bypassed"
-
-          %:
-          	@mkdir -p $(O)
-          	@if [ ! -f "$(O)/Makefile" ]; then \
-          		echo "include $(CURDIR)/Makefile" > $(O)/Makefile; \
-          	fi
-          	@$(MAKE) -C $(O) KBUILD_SRC=$(CURDIR) $@
-
           endif
           EOF
 
