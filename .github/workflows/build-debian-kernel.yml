@@ -78,7 +78,6 @@ jobs:
           export DEB_BUILD_PROFILES="nodoc,pkg.linux.notools,pkg.linux.quick"
           export DEBIAN_KERNEL_DISABLE_BUILDCHECK=y
           
-          # Force sub-makes to always include our fix even if they are in a different directory
           export MAKEFLAGS="-I$(CURDIR) -f $(CURDIR)/Makefile"
           
           dpkg-buildpackage -us -uc -B -Pnodoc,pkg.linux.notools,pkg.linux.quick -d
@@ -89,7 +88,7 @@ jobs:
           find .. -maxdepth 1 -name "*.deb" -exec mv {} out/ \;
 
       - name: Upload artifacts
-        uses: artifacts/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           name: savarez-kernel-deb
           path: out/
