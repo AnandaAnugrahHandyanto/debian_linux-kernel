@@ -78,7 +78,7 @@ jobs:
           export DEB_BUILD_PROFILES="nodoc,pkg.linux.notools,pkg.linux.quick"
           export DEBIAN_KERNEL_DISABLE_BUILDCHECK=y
           
-          export MAKEFLAGS="-I$(CURDIR) -f $(CURDIR)/Makefile"
+          export MAKEFLAGS="-I$(pwd) -f $(pwd)/Makefile"
           
           dpkg-buildpackage -us -uc -B -Pnodoc,pkg.linux.notools,pkg.linux.quick -d
 
