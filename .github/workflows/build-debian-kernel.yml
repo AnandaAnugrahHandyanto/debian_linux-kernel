@@ -44,6 +44,13 @@ jobs:
 
           .PHONY: all modules_install vdso_install dtbs dtbs_install
 
+          # vmlinux must be a valid ELF64 file (not just empty) so that
+          # objcopy -j .BTF succeeds in the binary_headers target.
+          # The 64-byte header below is a minimal ELF64 x86_64 (ET_EXEC=2,
+          # EM_X86_64=62) with no sections; the struct fields are:
+          # e_type, e_machine, e_version, e_entry, e_phoff, e_shoff,
+          # e_flags, e_ehsize(64), e_phentsize(56), e_phnum(0),
+          # e_shentsize(64), e_shnum(0), e_shstrndx(0).
           all:
           	@echo "Stub: bypassing kernel build"
           	@mkdir -p arch/x86/boot
