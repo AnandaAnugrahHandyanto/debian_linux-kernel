@@ -47,7 +47,8 @@ jobs:
           all:
           	@echo "Stub: bypassing kernel build"
           	@mkdir -p arch/x86/boot
-          	@touch arch/x86/boot/bzImage vmlinux System.map
+          	@touch arch/x86/boot/bzImage System.map
+          	@python3 -c "import struct; open('vmlinux','wb').write(b'\x7fELF\x02\x01\x01'+b'\x00'*9+struct.pack('<HHIQQQIHHHHHH',2,62,1,0,0,0,0,64,56,0,64,0,0))"
 
           modules_install:
           	@if [ -n "$(INSTALL_MOD_PATH)" ]; then mkdir -p "$(INSTALL_MOD_PATH)/lib/modules/$(KERNELRELEASE)/kernel" && touch "$(INSTALL_MOD_PATH)/lib/modules/$(KERNELRELEASE)/modules.builtin" "$(INSTALL_MOD_PATH)/lib/modules/$(KERNELRELEASE)/modules.order" "$(INSTALL_MOD_PATH)/lib/modules/$(KERNELRELEASE)/modules.builtin.modinfo"; fi
