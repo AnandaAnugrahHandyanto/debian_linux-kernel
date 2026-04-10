@@ -54,7 +54,7 @@ jobs:
           	@echo "Stub: bypassing kernel build"
           	@mkdir -p arch/x86/boot
           	@touch arch/x86/boot/bzImage System.map
-          	@python3 -c "import struct; hdr=b'\x7fELF\x02\x01\x01'+b'\x00'*9+struct.pack('<HHIQQQIHHHHHH',2,62,1,0,0,64,0,64,56,0,64,1,0); open('vmlinux','wb').write(hdr+b'\x00'*64)"
+          	@python3 -c "import struct; shstrtab=b'\x00.shstrtab\x00.BTF\x00.BTF_ids\x00'; shoff=64; soff=shoff+4*64; ident=b'\x7fELF\x02\x01\x01'+b'\x00'*9; hdr=ident+struct.pack('<HHIQQQIHHHHHH',2,62,1,0,0,shoff,0,64,56,0,64,4,1); null_sh=b'\x00'*64; strtab_sh=struct.pack('<IIQQQQIIQQ',1,3,0,0,soff,len(shstrtab),0,0,1,0); btf_sh=struct.pack('<IIQQQQIIQQ',11,1,0,0,0,0,0,0,1,0); btfids_sh=struct.pack('<IIQQQQIIQQ',16,1,0,0,0,0,0,0,1,0); open('vmlinux','wb').write(hdr+null_sh+strtab_sh+btf_sh+btfids_sh+shstrtab)"
 
           modules_install:
           	@if [ -n "$(INSTALL_MOD_PATH)" ]; then mkdir -p "$(INSTALL_MOD_PATH)/lib/modules/$(KERNELRELEASE)/kernel" && touch "$(INSTALL_MOD_PATH)/lib/modules/$(KERNELRELEASE)/modules.builtin" "$(INSTALL_MOD_PATH)/lib/modules/$(KERNELRELEASE)/modules.order" "$(INSTALL_MOD_PATH)/lib/modules/$(KERNELRELEASE)/modules.builtin.modinfo"; fi
