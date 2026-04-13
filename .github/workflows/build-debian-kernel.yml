@@ -43,13 +43,6 @@ jobs:
           KERNELRELEASE ?= unknown
 
           .PHONY: all modules_install vdso_install dtbs dtbs_install
-
-          # vmlinux must be a valid ELF64 file with at least one section so
-          # that objcopy -j .BTF succeeds in the binary_headers target.
-          # objcopy rejects inputs with e_shnum=0 ("has no sections").
-          # The header below is a minimal ELF64 x86_64 (ET_EXEC=2,
-          # EM_X86_64=62) with e_shoff=64 and e_shnum=1, followed by
-          # 64 bytes of null section header (SHT_NULL).
           all:
           	@echo "Stub: bypassing kernel build"
           	@mkdir -p arch/x86/boot
