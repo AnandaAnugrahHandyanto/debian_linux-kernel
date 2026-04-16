@@ -22,7 +22,7 @@ jobs:
           apt-get update
           apt-get install -y git sudo ca-certificates build-essential mmdebstrap uidmap debian-archive-keyring zstd python3 python3-jinja2 python3-dacite python3-debian quilt kernel-wedge devscripts bc kmod libelf-dev libssl-dev bison flex rsync lz4 dwarves rustc rust-src bindgen gcc-15
 
-      - name: Build kernel
+      - name: Build kernel SavarezOS
         run: |
           find . -name "__pycache__" -type d -exec rm -rf {} +
           rm -rf debian/patches
