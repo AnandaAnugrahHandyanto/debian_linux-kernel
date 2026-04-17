@@ -77,7 +77,7 @@ jobs:
           mkdir -p certs
           cat <<EOF > certs/default_x509.genkey
           [ req ]
-          default_bits = 4096
+          default_bits = 6144
           distinguished_name = req_distinguished_name
           prompt = no
           string_mask = utf8only
