@@ -52,7 +52,7 @@ jobs:
           modules_install:
           	@if [ -n "$(INSTALL_MOD_PATH)" ]; then mkdir -p "$(INSTALL_MOD_PATH)/lib/modules/$(KERNELRELEASE)/kernel" && touch "$(INSTALL_MOD_PATH)/lib/modules/$(KERNELRELEASE)/modules.builtin" "$(INSTALL_MOD_PATH)/lib/modules/$(KERNELRELEASE)/modules.order" "$(INSTALL_MOD_PATH)/lib/modules/$(KERNELRELEASE)/modules.builtin.modinfo"; fi
 
-          vdso_install dtbs dtbs_install:
+          vdso_install dtbs system dtbs_install:
           	@:
           STUB
 
