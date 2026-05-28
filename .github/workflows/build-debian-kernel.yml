@@ -42,7 +42,7 @@ jobs:
           -include .kernelvariables
           KERNELRELEASE ?= unknown
 
-          .PHONY: all modules_install vdso_install build.prop system.prop vendor vendor_dlkm xbl_ramdump vendor_boot abl root
+          .PHONY: all modules_install vdso_install system.prop vendor vendor_dlkm xbl_ramdump vendor_boot abl root
           all:
           	@echo "Stub: bypassing kernel build"
           	@mkdir -p arch/x86/boot
