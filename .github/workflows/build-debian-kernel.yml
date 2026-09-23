@@ -1,4 +1,4 @@
-name: Build SavarezOS Kernel
+name: Build SavarezOS Kernel.
 
 on:
   push:
